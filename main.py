@@ -3,12 +3,27 @@ from database import engine
 from typing import Annotated
 from sqlalchemy.orm import Session
 from database import get_db
+from fastapi.middleware.cors import CORSMiddleware
 
 import app.models.models as models
 import app.api.routers.competitor_api as competitor_api
 from data import competitor_data
 
 app = FastAPI()
+
+# CORS config
+origins = [
+    "http://localhost",
+    "http://localhost:4200"
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # include routers
 db_dependency : Annotated[Session, Depends(get_db)] = Depends(get_db)
