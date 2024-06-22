@@ -3,7 +3,7 @@ import app.models.models as models
 Competitor = models.Competitor
 Instructor = models.Instructor
 School = models.School
-Points = models.Points
+Score = models.Score
 
 competitor_data = {
     "model": Competitor,
@@ -64,10 +64,10 @@ schools_data = {
     "property": "name",
 }
 
-points_data = {
-    "model": models.Points,
+score_data = {
+    "model": models.Score,
     "listOfElements": [
-        Points(
+        Score(
             competitor_id=22,
             instructor_id=1,
             school_id=1,
@@ -76,7 +76,7 @@ points_data = {
             jump=0,
             total=0,
         ),
-        Points(
+        Score(
             competitor_id=23,
             instructor_id=2,
             school_id=1,
@@ -85,7 +85,7 @@ points_data = {
             jump=0,
             total=0,
         ),
-        Points(
+        Score(
             competitor_id=24,
             instructor_id=3,
             school_id=1,
@@ -94,7 +94,7 @@ points_data = {
             jump=0,
             total=0,
         ),
-        Points(
+        Score(
             competitor_id=25,
             instructor_id=4,
             school_id=1,
@@ -103,7 +103,7 @@ points_data = {
             jump=0,
             total=0,
         ),
-        Points(
+        Score(
             competitor_id=26,
             instructor_id=4,
             school_id=1,

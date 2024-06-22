@@ -9,7 +9,7 @@ class Instructor(Base):
     id_instructor = Column(BigInteger, primary_key=True, autoincrement=True)
     name = Column(String, nullable=False)
 
-    points = relationship("Points", back_populates="instructor")
+    score = relationship("Score", back_populates="instructor")
 
 
 class School(Base):
@@ -19,7 +19,7 @@ class School(Base):
     name = Column(String, nullable=False)
     acronym = Column(String, nullable=False)
 
-    points = relationship("Points", back_populates="school")
+    score = relationship("Score", back_populates="school")
 
 
 class Competitor(Base):
@@ -31,14 +31,13 @@ class Competitor(Base):
     belt = Column(String, nullable=False)
     isDan = Column(Boolean, nullable=False)
 
-    points = relationship("Points", back_populates="competitor")
+    score = relationship("Score", back_populates="competitor")
 
 
-class Points(Base):
-    __tablename__ = "points"
+class Score(Base):
+    __tablename__ = "score"
 
-    id_points = Column(BigInteger, primary_key=True, index=True, autoincrement=True)
-    competitor_id = Column(BigInteger, ForeignKey("competitor.id_competitor"))
+    competitor_id = Column(BigInteger, ForeignKey("competitor.id_competitor"), primary_key=True)
     instructor_id = Column(BigInteger, ForeignKey("instructor.id_instructor"))
     school_id = Column(BigInteger, ForeignKey("school.id_school"))
     
@@ -47,6 +46,6 @@ class Points(Base):
     jump = Column(Integer, default=0)
     total = Column(Integer, default=0)
 
-    competitor = relationship("Competitor", back_populates="points")
-    instructor = relationship("Instructor", back_populates="points")
-    school = relationship("School", back_populates="points")
+    competitor = relationship("Competitor", back_populates="score")
+    instructor = relationship("Instructor", back_populates="score")
+    school = relationship("School", back_populates="score")

@@ -1,12 +1,13 @@
 from sqlalchemy.orm import Session
 from fastapi import HTTPException
-from app.schemas.table_data_sch import TableData
+from app.schemas.schemas import TableData
+from app.schemas.schemas import Score as ScoreSch
 import app.models.models as models
 
 Competitor = models.Competitor
 Instructor = models.Instructor
 School = models.School
-Points = models.Points
+Score = models.Score
 
 
 def get_table_data(db: Session):
@@ -15,14 +16,14 @@ def get_table_data(db: Session):
             Competitor,
             Instructor.name,
             School.name,
-            Points.forms,
-            Points.combat,
-            Points.jump,
-            Points.total,
+            Score.forms,
+            Score.combat,
+            Score.jump,
+            Score.total,
         )
-        .join(Points, Competitor.id_competitor == Points.competitor_id)
-        .join(Instructor, Points.instructor_id == Instructor.id_instructor)
-        .join(School, Points.school_id == School.id_school)
+        .join(Score, Competitor.id_competitor == Score.competitor_id)
+        .join(Instructor, Score.instructor_id == Instructor.id_instructor)
+        .join(School, Score.school_id == School.id_school)
         .all()
     )
     if not competitors:
@@ -57,24 +58,24 @@ def get_table_data(db: Session):
     return table_data
 
 
-def calculate_total(
-    db: Session, competitor_id: int, forms: int, combat: int, jump: int
-):
-    competitor = (
-        db.query(Competitor).filter(Competitor.id_competitor == competitor_id).first()
+def calculate_total(db: Session, competitor_id: int, new_score: ScoreSch):
+    # TODO: VALIDAR QUE JUMP SOLO SEA PARA DANES
+    
+    score = (
+        db.query(Score).filter(Score.competitor_id == competitor_id).first()
     )
-    if not competitor:
-        raise HTTPException(status_code=404, detail="No se encontró el competidor.")
+    if not score:
+        raise HTTPException(status_code=404, detail="No se encontró el score.")
 
-    points_forms = Points.get_points(forms)
-    points_combat = Points.get_points(combat)
-    points_jump = Points.get_points(jump)
+    score_forms = new_score.get_score(new_score.forms)
+    score_combat = new_score.get_score(new_score.combat)
+    score_jump = new_score.get_score(new_score.jump)
 
-    competitor.forms = forms
-    competitor.combat = combat
-    competitor.jump = jump
-    competitor.total = points_forms + points_combat + points_jump
+    score.forms = new_score.forms
+    score.combat = new_score.combat
+    score.jump = new_score.jump
+    score.total = score_forms + score_combat + score_jump
 
     db.commit()
-    db.refresh(competitor)
-    return competitor.total
+    db.refresh(score)
+    return score.total
