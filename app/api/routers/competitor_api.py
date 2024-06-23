@@ -7,7 +7,7 @@ import app.services.competitor_service as service
 router = APIRouter(prefix="/competitors", tags=["competitors"])
 
 
-@router.get("", summary="Get all competitors.")
+@router.get("", summary="Get all data.")
 def get_table_data(db: Session = Depends(get_db)):
     return service.get_table_data(db)
 

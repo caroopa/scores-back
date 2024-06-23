@@ -7,6 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 import app.models.models as models
 import app.api.routers.competitor_api as competitor_api
+import app.api.routers.instructor_api as instructor_api
 import data
 
 app = FastAPI()
@@ -25,6 +26,7 @@ app.add_middleware(
 # include routers
 db_dependency: Annotated[Session, Depends(get_db)] = Depends(get_db)
 app.include_router(competitor_api.router, dependencies=[db_dependency])
+app.include_router(instructor_api.router, dependencies=[db_dependency])
 
 # create tables
 models.Base.metadata.create_all(bind=engine)

@@ -24,3 +24,7 @@ class Score(BaseModel):
     def get_score(key):
         places = {0: 0, 1: 9, 2: 5, 3: 2}
         return places.get(key, None)
+
+class InstructorScore(BaseModel):
+    name: str
+    total: int
