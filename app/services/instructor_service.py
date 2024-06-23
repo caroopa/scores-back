@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from sqlalchemy import func
+from sqlalchemy import func, desc
 from fastapi import HTTPException
 from app.schemas.schemas import InstructorScore
 import app.models.models as models
@@ -13,6 +13,7 @@ def get_instructors_scores(db: Session):
         db.query(Instructor.name, func.sum(Score.total).label("total"))
         .join(Score, Score.instructor_id == Instructor.id_instructor)
         .group_by(Instructor.id_instructor)
+        .order_by(desc("total"))
         .all()
     )
 
