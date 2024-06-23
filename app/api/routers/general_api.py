@@ -2,14 +2,14 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from database import get_db
 from app.schemas.schemas import Score as ScoreSch
-import app.services.competitor_service as service
+import app.services.general_service as service
 
-router = APIRouter(prefix="/competitors", tags=["competitors"])
+router = APIRouter(prefix="/general", tags=["general"])
 
 
-@router.get("", summary="Get all data.")
-def get_table_data(db: Session = Depends(get_db)):
-    return service.get_table_data(db)
+@router.get("", summary="Get all general data.")
+def get_data(db: Session = Depends(get_db)):
+    return service.get_data(db)
 
 
 @router.put(

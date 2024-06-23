@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from fastapi import HTTPException
-from app.schemas.schemas import TableData
+from app.schemas.schemas import General
 from app.schemas.schemas import Score as ScoreSch
 import app.models.models as models
 
@@ -10,7 +10,7 @@ School = models.School
 Score = models.Score
 
 
-def get_table_data(db: Session):
+def get_data(db: Session):
     competitors = (
         db.query(
             Competitor,
@@ -40,7 +40,7 @@ def get_table_data(db: Session):
         jump,
         total,
     ) in competitors:
-        data = TableData(
+        data = General(
             id_competitor=competitor.id_competitor,
             school=school_name,
             instructor=instructor_name,

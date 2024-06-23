@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 
 
-class TableData(BaseModel):
+class General(BaseModel):
     id_competitor: int
     school: str
     instructor: str
