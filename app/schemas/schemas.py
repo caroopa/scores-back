@@ -35,6 +35,7 @@ class InstructorScore(BaseModel):
 class CompetitorScore(BaseModel):
     name: str
     belt: str
+    school: str
     total: int
 
 

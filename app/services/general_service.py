@@ -11,15 +11,7 @@ Score = models.Score
 
 def get_data(db: Session):
     competitors = (
-        db.query(
-            Competitor,
-            Instructor.name,
-            School.acronym,
-            Score.forms,
-            Score.combat,
-            Score.jump,
-            Score.total,
-        )
+        db.query(Competitor, Instructor.name, School.acronym, Score)
         .join(Score, Competitor.id_competitor == Score.competitor_id)
         .join(Instructor, Score.instructor_id == Instructor.id_instructor)
         .join(School, Score.school_id == School.id_school)
@@ -30,27 +22,19 @@ def get_data(db: Session):
 
     table_data = []
 
-    for (
-        competitor,
-        instructor,
-        school,
-        forms,
-        combat,
-        jump,
-        total,
-    ) in competitors:
+    for competitor, instructor_name, school, score in competitors:
         data = schemas.General(
             id_competitor=competitor.id_competitor,
             school=schemas.School.get_school_name(school),
-            instructor=instructor,
+            instructor=instructor_name,
             name=competitor.name,
             age=competitor.age,
             belt=competitor.category["belt"],
             is_dan=competitor.category["is_dan"],
-            forms=forms,
-            combat=combat,
-            jump=jump,
-            total=total,
+            forms=score.forms,
+            combat=score.combat,
+            jump=score.jump,
+            total=score.total,
         )
         table_data.append(data)
 
