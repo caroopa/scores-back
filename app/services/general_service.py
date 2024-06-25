@@ -1,7 +1,6 @@
 from sqlalchemy.orm import Session
 from fastapi import HTTPException
-from app.schemas.schemas import General
-from app.schemas.schemas import Score as ScoreSch
+import app.schemas.schemas as schemas
 import app.models.models as models
 
 Competitor = models.Competitor
@@ -15,7 +14,7 @@ def get_data(db: Session):
         db.query(
             Competitor,
             Instructor.name,
-            School.name,
+            School.acronym,
             Score.forms,
             Score.combat,
             Score.jump,
@@ -33,21 +32,21 @@ def get_data(db: Session):
 
     for (
         competitor,
-        instructor_name,
-        school_name,
+        instructor,
+        school,
         forms,
         combat,
         jump,
         total,
     ) in competitors:
-        data = General(
+        data = schemas.General(
             id_competitor=competitor.id_competitor,
-            school=school_name,
-            instructor=instructor_name,
+            school=schemas.School.get_school_name(school),
+            instructor=instructor,
             name=competitor.name,
             age=competitor.age,
-            belt=competitor.belt,
-            isDan=competitor.isDan,
+            belt=competitor.category["belt"],
+            is_dan=competitor.category["is_dan"],
             forms=forms,
             combat=combat,
             jump=jump,
@@ -58,12 +57,10 @@ def get_data(db: Session):
     return table_data
 
 
-def calculate_total(db: Session, competitor_id: int, new_score: ScoreSch):
+def calculate_total(db: Session, competitor_id: int, new_score: schemas.Score):
     # TODO: VALIDAR QUE JUMP SOLO SEA PARA DANES
-    
-    score = (
-        db.query(Score).filter(Score.competitor_id == competitor_id).first()
-    )
+
+    score = db.query(Score).filter(Score.competitor_id == competitor_id).first()
     if not score:
         raise HTTPException(status_code=404, detail="No se encontró el score.")
 
