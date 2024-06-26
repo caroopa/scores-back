@@ -44,6 +44,13 @@ class Category(BaseModel):
     is_dan: bool
     value: int
 
+    @staticmethod
+    def get_category_by_belt(belt, categories_data):
+        for category in categories_data.values():
+            if category.belt == belt:
+                return category
+        return None
+
 
 class School(BaseModel):
     acronym: str
@@ -67,3 +74,6 @@ class School(BaseModel):
             "DWA": "Dae Wan Gam",
         }
         return switcher.get(acronym, acronym)
+
+class Instructor(BaseModel):
+    name: str

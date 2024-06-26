@@ -1,7 +1,10 @@
+from fastapi import HTTPException, UploadFile
 from sqlalchemy.orm import Session
-from fastapi import HTTPException
+import pandas as pd
+from io import StringIO
 import app.schemas.schemas as schemas
 import app.models.models as models
+import data
 
 Competitor = models.Competitor
 Instructor = models.Instructor
@@ -60,3 +63,85 @@ def calculate_total(db: Session, competitor_id: int, new_score: schemas.Score):
     db.commit()
     db.refresh(score)
     return score.total
+
+
+def create_data(db: Session, file: UploadFile):
+    try:
+        # Leer el contenido del archivo CSV
+        contents = file.file.read().decode("utf-8")
+        df = pd.read_csv(StringIO(contents), sep=";")
+
+        for _, row in df.iterrows():
+            # Obtener los datos necesarios de cada fila
+            competitor_name = row["Apellido y Nombres"]
+            competitor_age = row["Edad"]
+            competitor_category = row["Graduación"]
+            instructor_name = row["Instructor"]
+            school_acronym = row["Esc."]
+
+            # Buscar o crear el instructor
+            db_instructor = (
+                db.query(Instructor).filter(Instructor.name == instructor_name).first()
+            )
+            if not db_instructor:
+                db_instructor = Instructor()
+                db_instructor.name = instructor_name
+                print(db_instructor.id_instructor)
+                db.add(db_instructor)
+                db.commit()
+                db.refresh(db_instructor)
+
+            # Buscar o crear la escuela
+            db_school = (
+                db.query(School).filter(School.acronym == school_acronym).first()
+            )
+            if not db_school:
+                db_school = School(acronym=school_acronym)
+                db.add(db_school)
+                db.commit()
+                db.refresh(db_school)
+
+            # Buscar la categoría
+            category = schemas.Category.get_category_by_belt(
+                competitor_category, data.categories_data
+            )
+            if not category:
+                raise HTTPException(
+                    status_code=400,
+                    detail=f"Categoría '{competitor_category}' no encontrada",
+                )
+
+            # Crear el competidor
+            db_competitor = Competitor(
+                name=competitor_name,
+                age=competitor_age,
+                category=category.model_dump(),
+            )
+            db.add(db_competitor)
+            db.commit()
+            db.refresh(db_competitor)
+
+            # Crear el score
+            db_score = Score(
+                competitor_id=db_competitor.id_competitor,
+                instructor_id=db_instructor.id_instructor,
+                school_id=db_school.id_school,
+                forms=0,
+                combat=0,
+                jump=0,
+                total=0,
+            )
+            db.add(db_score)
+            db.commit()
+            db.refresh(db_score)
+
+        return {"message": "Archivo cargado correctamente."}
+
+    except Exception as e:
+        db.rollback()
+        print(e)
+        raise HTTPException(
+            status_code=400, detail=f"Ocurrió un error en la carga: {e}"
+        )
+    finally:
+        db.close()
