@@ -6,7 +6,7 @@ from sqlalchemy.orm import relationship
 class Instructor(Base):
     __tablename__ = "instructor"
 
-    id_instructor = Column(Integer, primary_key=True)
+    id_instructor = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String, nullable=False)
 
     score = relationship("Score", back_populates="instructor")
@@ -15,7 +15,7 @@ class Instructor(Base):
 class School(Base):
     __tablename__ = "school"
 
-    id_school = Column(Integer, primary_key=True)
+    id_school = Column(Integer, primary_key=True, autoincrement=True)
     acronym = Column(String, nullable=False)
 
     score = relationship("Score", back_populates="school")
@@ -24,7 +24,7 @@ class School(Base):
 class Competitor(Base):
     __tablename__ = "competitor"
 
-    id_competitor = Column(Integer, primary_key=True)
+    id_competitor = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String, nullable=False)
     age = Column(Integer, nullable=False)
     category = Column(JSON)
@@ -36,7 +36,10 @@ class Score(Base):
     __tablename__ = "score"
 
     competitor_id = Column(
-        Integer, ForeignKey("competitor.id_competitor"), primary_key=True
+        Integer,
+        ForeignKey("competitor.id_competitor"),
+        primary_key=True,
+        autoincrement=True,
     )
     instructor_id = Column(Integer, ForeignKey("instructor.id_instructor"))
     school_id = Column(Integer, ForeignKey("school.id_school"))

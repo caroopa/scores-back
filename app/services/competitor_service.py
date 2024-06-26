@@ -22,6 +22,7 @@ def get_competitors_scores(db: Session, is_dan: bool):
         .group_by(Competitor.id_competitor)
         .filter(cast(Competitor.category["is_dan"], Integer) == cast(is_dan, Integer))
         .order_by(desc("total"), desc(cast(Competitor.category["value"], Integer)))
+        .limit(10)
         .all()
     )
 

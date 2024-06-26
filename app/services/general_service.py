@@ -86,7 +86,6 @@ def create_data(db: Session, file: UploadFile):
             if not db_instructor:
                 db_instructor = Instructor()
                 db_instructor.name = instructor_name
-                print(db_instructor.id_instructor)
                 db.add(db_instructor)
                 db.commit()
                 db.refresh(db_instructor)
@@ -139,9 +138,8 @@ def create_data(db: Session, file: UploadFile):
 
     except Exception as e:
         db.rollback()
-        print(e)
         raise HTTPException(
-            status_code=400, detail=f"Ocurrió un error en la carga: {e}"
+            status_code=400, detail=f"Error en la carga: {e}"
         )
     finally:
         db.close()
