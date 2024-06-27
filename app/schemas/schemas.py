@@ -75,5 +75,6 @@ class School(BaseModel):
         }
         return switcher.get(acronym, acronym)
 
+
 class Instructor(BaseModel):
     name: str

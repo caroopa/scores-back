@@ -67,19 +67,24 @@ def calculate_total(db: Session, competitor_id: int, new_score: schemas.Score):
 
 def create_data(db: Session, file: UploadFile):
     try:
-        # Leer el contenido del archivo CSV
+        # Delete DB
+        models.Base.metadata.drop_all(bind=db.get_bind())
+        models.Base.metadata.create_all(bind=db.get_bind())
+
+        # Read CSV
+        # TODO: VALIDAR
         contents = file.file.read().decode("utf-8")
         df = pd.read_csv(StringIO(contents), sep=";")
 
         for _, row in df.iterrows():
-            # Obtener los datos necesarios de cada fila
+            # Rows
             competitor_name = row["Apellido y Nombres"]
             competitor_age = row["Edad"]
             competitor_category = row["Graduación"]
             instructor_name = row["Instructor"]
             school_acronym = row["Esc."]
 
-            # Buscar o crear el instructor
+            # Instructor
             db_instructor = (
                 db.query(Instructor).filter(Instructor.name == instructor_name).first()
             )
@@ -90,7 +95,7 @@ def create_data(db: Session, file: UploadFile):
                 db.commit()
                 db.refresh(db_instructor)
 
-            # Buscar o crear la escuela
+            # School
             db_school = (
                 db.query(School).filter(School.acronym == school_acronym).first()
             )
@@ -100,7 +105,7 @@ def create_data(db: Session, file: UploadFile):
                 db.commit()
                 db.refresh(db_school)
 
-            # Buscar la categoría
+            # Category
             category = schemas.Category.get_category_by_belt(
                 competitor_category, data.categories_data
             )
@@ -110,7 +115,7 @@ def create_data(db: Session, file: UploadFile):
                     detail=f"Categoría '{competitor_category}' no encontrada",
                 )
 
-            # Crear el competidor
+            # Competitor
             db_competitor = Competitor(
                 name=competitor_name,
                 age=competitor_age,
@@ -120,7 +125,7 @@ def create_data(db: Session, file: UploadFile):
             db.commit()
             db.refresh(db_competitor)
 
-            # Crear el score
+            # Score
             db_score = Score(
                 competitor_id=db_competitor.id_competitor,
                 instructor_id=db_instructor.id_instructor,
@@ -138,8 +143,6 @@ def create_data(db: Session, file: UploadFile):
 
     except Exception as e:
         db.rollback()
-        raise HTTPException(
-            status_code=400, detail=f"Error en la carga: {e}"
-        )
+        raise HTTPException(status_code=400, detail=f"Error en la carga: {e}")
     finally:
         db.close()
