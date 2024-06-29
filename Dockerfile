@@ -13,5 +13,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copiar el contenido del directorio actual al directorio de trabajo en la imagen
 COPY . .
 
+# Copiar el archivo .env al contenedor
+COPY .env .env
+
 # Comando para ejecutar la aplicación
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
