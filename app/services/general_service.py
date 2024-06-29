@@ -18,6 +18,7 @@ def get_data(db: Session):
         .join(Score, Competitor.id_competitor == Score.competitor_id)
         .join(Instructor, Score.instructor_id == Instructor.id_instructor)
         .join(School, Score.school_id == School.id_school)
+        .order_by(Competitor.id_competitor)
         .all()
     )
     if not competitors:
