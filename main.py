@@ -9,12 +9,13 @@ import app.models.models as models
 import app.api.routers.general_api as general_api
 import app.api.routers.instructor_api as instructor_api
 import app.api.routers.competitor_api as competitor_api
+
 # import data
 
 app = FastAPI()
 
 # CORS config
-origins = ["http://localhost", "http://localhost:4200"]
+origins = ["https://scores-front.vercel.app", "http://scores-front.vercel.app"]
 
 app.add_middleware(
     CORSMiddleware,
@@ -78,7 +79,7 @@ models.Base.metadata.create_all(bind=engine)
 #         if not element_exist:
 #             db.add(ternary_element)
 #             db.commit()
-            
+
 # db = next(get_db())
 # insert_data_by_a_dict(data.competitor_data)
 # insert_data_by_a_dict(data.instructors_data)
