@@ -1,18 +1,23 @@
-# Usa la imagen base de Python
-FROM python:3.9-slim
+# Usar una imagen base oficial de Python
+FROM python:3.10-slim
 
-# Establece el directorio de trabajo en /app
+# Establecer el directorio de trabajo en /app
 WORKDIR /app
 
-# Copia los archivos necesarios (requerimientos y la aplicación)
+# Copiar los archivos de requerimientos
 COPY requirements.txt .
-RUN pip install -r requirements.txt
 
-# Copia el archivo main.py al directorio de trabajo
-COPY main.py .
+# Instalar las dependencias
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Expone el puerto 8000 para la aplicación FastAPI
-EXPOSE 8000
+# Instalar python-dotenv para manejar variables de entorno desde un archivo .env
+RUN pip install python-dotenv
 
-# Comando para ejecutar la aplicación FastAPI con Uvicorn
+# Copiar el contenido del directorio actual al directorio de trabajo en la imagen
+COPY . .
+
+# Copiar el archivo .env
+COPY .env .
+
+# Comando para ejecutar la aplicación
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
