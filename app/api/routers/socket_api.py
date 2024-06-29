@@ -35,15 +35,3 @@ async def websocket_endpoint(websocket: WebSocket):
             data = await websocket.receive_text()
     except WebSocketDisconnect:
         manager.disconnect(websocket)
-
-
-@router.put(
-    "/calculate_total/{competitor_id}",
-    summary="Calculate total score of current competitor.",
-)
-async def calculate_total(
-    competitor_id: int, new_score: ScoreSch, db: Session = Depends(get_db)
-):
-    result = service.calculate_total(db, competitor_id, new_score)
-    await manager.send_message(f"Total score updated for competitor {competitor_id}")
-    return result
