@@ -1,10 +1,5 @@
-from fastapi import WebSocket, WebSocketDisconnect, APIRouter, Depends
-from sqlalchemy.orm import Session
+from fastapi import WebSocket, WebSocketDisconnect, APIRouter
 from typing import List
-
-from database import get_db
-from app.schemas.schemas import Score as ScoreSch
-import app.services.general_service as service
 
 router = APIRouter()
 
