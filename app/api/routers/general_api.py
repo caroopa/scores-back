@@ -26,13 +26,3 @@ def calculate_total(
 @router.post("/upload", summary="Upload file to create data.")
 def create_data(file: UploadFile = File(...), db: Session = Depends(get_db)):
     return service.create_data(db, file)
-
-@router.get("/info")
-def get_info(db: Session = Depends(get_db)):
-    engine = db.get_bind()
-    inspector = inspect(engine)
-    table_info = {}
-    for table_name in inspector.get_table_names():
-        columns = inspector.get_columns(table_name)
-        table_info[table_name] = columns
-    return table_info

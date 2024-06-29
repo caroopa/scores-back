@@ -1,20 +1,18 @@
-# Usar una imagen base oficial de Python
-FROM python:3.10-slim
+# Usa la imagen base de Python
+FROM python:3.9-slim
 
-# Establecer el directorio de trabajo en /app
+# Establece el directorio de trabajo en /app
 WORKDIR /app
 
-# Copiar los archivos de requerimientos
+# Copia los archivos necesarios (requerimientos y la aplicación)
 COPY requirements.txt .
+COPY app/ ./app
 
-# Instalar las dependencias
-RUN pip install --no-cache-dir -r requirements.txt
+# Instala las dependencias del proyecto
+RUN pip install -r requirements.txt
 
-# Copiar el contenido del directorio actual al directorio de trabajo en la imagen
-COPY . .
+# Expone el puerto 8000 para la aplicación FastAPI
+EXPOSE 8000
 
-# Copiar el archivo .env al contenedor
-COPY .env .env
-
-# Comando para ejecutar la aplicación
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+# Comando para ejecutar la aplicación FastAPI con Gunicorn
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
