@@ -13,7 +13,7 @@ import app.api.routers.socket_api as socket_api
 app = FastAPI()
 
 # CORS config
-origins = ["http://localhost", "http://localhost:4200"]
+origins = ["https://scores-front.vercel.app", "http://scores-front.vercel.app"]
 
 app.add_middleware(
     CORSMiddleware,
