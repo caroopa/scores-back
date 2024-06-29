@@ -6,13 +6,13 @@ WORKDIR /app
 
 # Copia los archivos necesarios (requerimientos y la aplicación)
 COPY requirements.txt .
-COPY app/ ./app
-
-# Instala las dependencias del proyecto
 RUN pip install -r requirements.txt
+
+# Copia el archivo main.py al directorio de trabajo
+COPY main.py .
 
 # Expone el puerto 8000 para la aplicación FastAPI
 EXPOSE 8000
 
-# Comando para ejecutar la aplicación FastAPI con Gunicorn
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+# Comando para ejecutar la aplicación FastAPI con Uvicorn
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
