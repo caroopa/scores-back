@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from sqlalchemy import func, desc, cast, Integer
+from sqlalchemy import func, desc, Boolean, Integer, cast
 from fastapi import HTTPException
 import app.models.models as models
 import app.schemas.schemas as schemas
@@ -19,8 +19,8 @@ def get_competitors_scores(db: Session, is_dan: bool):
         )
         .join(Score, Competitor.id_competitor == Score.competitor_id)
         .join(School, Score.school_id == School.id_school)
-        .group_by(Competitor.id_competitor)
-        .filter(cast(Competitor.category["is_dan"], Integer) == cast(is_dan, Integer))
+        .group_by(Competitor.name, Competitor.category, School.acronym)
+        .filter(cast(Competitor.category["is_dan"], Boolean) == is_dan)
         .order_by(desc("total"), desc(cast(Competitor.category["value"], Integer)))
         .limit(10)
         .all()

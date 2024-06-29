@@ -1,4 +1,5 @@
-from sqlalchemy import Column, Integer, String, JSON, ForeignKey, BigInteger
+from sqlalchemy import Column, Integer, String, ForeignKey, BigInteger
+from sqlalchemy.dialects.postgresql import JSONB
 from database import Base
 from sqlalchemy.orm import relationship
 
@@ -27,7 +28,7 @@ class Competitor(Base):
     id_competitor = Column(BigInteger, primary_key=True, autoincrement=True)
     name = Column(String, nullable=False)
     age = Column(Integer, nullable=False)
-    category = Column(JSON)
+    category = Column(JSONB)
 
     score = relationship("Score", back_populates="competitor")
 
