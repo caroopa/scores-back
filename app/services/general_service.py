@@ -4,7 +4,7 @@ import pandas as pd
 from io import StringIO
 import app.schemas.schemas as schemas
 import app.models.models as models
-import data
+import app.utils.categories_data as categories_data
 
 Competitor = models.Competitor
 Instructor = models.Instructor
@@ -108,7 +108,7 @@ def create_data(db: Session, file: UploadFile):
 
             # Category
             category = schemas.Category.get_category_by_belt(
-                competitor_category, data.categories_data
+                competitor_category, categories_data.categories_data
             )
             if not category:
                 raise HTTPException(

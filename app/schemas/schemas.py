@@ -1,5 +1,4 @@
 from pydantic import BaseModel
-from app.models.models import Competitor
 
 
 class General(BaseModel):
